@@ -1,0 +1,17 @@
+export 'package:gymcounter/pages/list/list_page.dart';
+export 'package:gymcounter/pages/rutines/rutine_detail_page.dart';
+export 'package:gymcounter/pages/statistics/statistics_list_page.dart';
+export 'package:gymcounter/pages/workouts/workouts_list_page.dart';
+export 'package:gymcounter/pages/exercise/exercise_history_page.dart';
+export 'package:gymcounter/pages/exercise/exercise_page.dart';
+export 'package:gymcounter/pages/weight/weight_page.dart';
+export 'package:gymcounter/pages/exercise/exercises_list_page.dart';
+export 'package:gymcounter/pages/rutines/rutines_list_page.dart';
+export 'package:gymcounter/pages/workouts/workout_page.dart';
+export 'package:gymcounter/pages/rutines/play_rutine_page.dart';
+export 'package:gymcounter/pages/exercise/new_exercise_page.dart';
+export 'package:gymcounter/pages/settings/settings_page.dart';
+export 'package:gymcounter/pages/main/main_page.dart';
+export 'package:gymcounter/pages/history/history_page.dart';
+export 'package:gymcounter/pages/statistics/statistics_page.dart';
+export 'package:gymcounter/pages/home/home_page.dart';

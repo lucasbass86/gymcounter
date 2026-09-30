@@ -41,10 +41,28 @@ class MainDrawer extends StatelessWidget {
                 children: [
                   ListTile(
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                    leading: Icon(Utils.iconDumbbell),
+                    title: Text('Ejercicios'),
+                    onTap: () {
+                      Navigator.pushNamed(context, ExercisesListPage.routeName);
+                      Scaffold.of(context).closeDrawer();
+                    },
+                  ),
+                  ListTile(
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                     leading: Icon(Utils.iconFire),
                     title: Text('Workouts'),
                     onTap: () {
                       Navigator.pushNamed(context, WorkoutsListPage.routeName);
+                      Scaffold.of(context).closeDrawer();
+                    },
+                  ),
+                  ListTile(
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                    leading: Icon(Utils.iconReps),
+                    title: Text('Rutinas'),
+                    onTap: () {
+                      Navigator.pushNamed(context, RutinesListPage.routeName);
                       Scaffold.of(context).closeDrawer();
                     },
                   ),
@@ -62,19 +80,10 @@ class MainDrawer extends StatelessWidget {
                   ),
                   ListTile(
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                    leading: Icon(Utils.iconReps),
-                    title: Text('Rutinas'),
+                    leading: Icon(Utils.iconTarget),
+                    title: Text('Objetivos'),
                     onTap: () {
-                      Navigator.pushNamed(context, RutinesListPage.routeName);
-                      Scaffold.of(context).closeDrawer();
-                    },
-                  ),
-                  ListTile(
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                    leading: Icon(Utils.iconDumbbell),
-                    title: Text('Ejercicios'),
-                    onTap: () {
-                      Navigator.pushNamed(context, ExercisesListPage.routeName);
+                      Navigator.pushNamed(context, ListTargetsPage.routeName);
                       Scaffold.of(context).closeDrawer();
                     },
                   ),

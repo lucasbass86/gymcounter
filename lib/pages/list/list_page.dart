@@ -36,6 +36,23 @@ class ListPage extends StatelessWidget {
         itemCount: list.length,
         itemBuilder: (BuildContext context, int index) => WorkoutWidget(workout: list[index]),
       );
+    } else if (list is List<Measurement>) {
+      return ListView.builder(
+        physics: const BouncingScrollPhysics(),
+        itemCount: list.length,
+        itemBuilder: (context, index) {
+          return MeasurementWidget(measurement: list[index]);
+        },
+      );
+    } else if (list is List<Target>) {
+      return ListView.builder(
+        physics: const BouncingScrollPhysics(),
+        shrinkWrap: true,
+        itemCount: list.length,
+        itemBuilder: (context, index) {
+          return TargetWidget(target: list[index]);
+        },
+      );
     } else if (list is List) {
       final workouts = list[0] as List<Workout>;
       return ListView.builder(
@@ -51,14 +68,6 @@ class ListPage extends StatelessWidget {
               return RecentExerciseWidget(set: w.exercisesSet[index], workout: w);
             },
           );
-        },
-      );
-    } else if (list is List<Measurement>) {
-      return ListView.builder(
-        physics: const BouncingScrollPhysics(),
-        itemCount: list.length,
-        itemBuilder: (context, index) {
-          return MeasurementWidget(measurement: list[index]);
         },
       );
     }

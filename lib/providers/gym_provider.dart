@@ -36,6 +36,7 @@ class GymProvider with ChangeNotifier {
     loadRutines();
     loadWorkouts();
     loadCurrentWorkout();
+    checkTargets();
   }
 
   void notify() {
@@ -409,6 +410,7 @@ class GymProvider with ChangeNotifier {
     try {
       if (!workouts.any((w) => w.id == workout.id)) workouts.add(workout);
       Boxes.workouts.put(workout.id, workout.toJson());
+      checkTargets();
       notifyListeners();
       return true;
     } catch (e) {
@@ -416,10 +418,11 @@ class GymProvider with ChangeNotifier {
     }
   }
 
-  bool deleteWorkout(Workout workout) {
+  Future<bool> deleteWorkout(Workout workout) async {
     try {
       workouts.remove(workout);
       Boxes.workouts.delete(workout.id);
+      await updateTargetForDay(workout.date);
       notifyListeners();
       return true;
     } catch (e) {
@@ -432,5 +435,112 @@ class GymProvider with ChangeNotifier {
       return currentWorkout!;
     }
     return workouts.firstWhere((workout) => workout.exercisesSet.any((e) => e.id == exercise.id));
+  }
+
+  ///
+  ///OBJETIVOS
+  ///
+  List<Target> targets = [];
+
+  void loadTargets() {
+    //VACIAR:
+    //Boxes.targets.deleteAll(Boxes.targets.keys);
+    targets = Boxes.targets.keys.map((key) {
+      final value = Boxes.targets.get(key);
+      return Target.fromJson(value);
+    }).toList();
+    targets.sort((a, b) => b.date.compareTo(a.date));
+    notifyListeners();
+  }
+
+  void deleteTarget(Target target) async {
+    targets.removeWhere((t) => t.id == target.id);
+    await Boxes.targets.delete(target.id);
+  }
+
+  void checkTargets() async {
+    final Map<DateTime, int> repsByDay = {};
+
+    for (final workout in workouts) {
+      final day = DateTime(workout.date.year, workout.date.month, workout.date.day);
+      repsByDay[day] = (repsByDay[day] ?? 0) + workout.totalReps;
+    }
+
+    for (final entry in repsByDay.entries) {
+      final day = entry.key;
+      final id = _targetId(day);
+
+      final Target target = Target.withId(
+        id: id,
+        date: day,
+        value: entry.value,
+        target: Preferences.respForDay,
+      );
+      bool add = false;
+      if (!Boxes.targets.containsKey(id)) {
+        add = true;
+      } else {
+        Target t = Target.fromJson(Boxes.targets.get(id));
+        if (t.value != target.value) {
+          add = true;
+        }
+      }
+      if (add) {
+        await Boxes.targets.put(id, target.toJson());
+      }
+    }
+    if (!Boxes.targets.containsKey(_targetId(DateTime.now()))) {
+      await Boxes.targets.put(
+        _targetId(DateTime.now()),
+        Target.withId(
+          id: _targetId(DateTime.now()),
+          date: DateTime.now(),
+          value: 0,
+          target: Preferences.respForDay,
+        ).toJson(),
+      );
+    }
+    loadTargets();
+  }
+
+  String _targetId(DateTime date) {
+    return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+  }
+
+  Future<void> updateTargetForDay(DateTime day) async {
+    final normalizedDay = DateTime(day.year, day.month, day.day);
+
+    final targetId = _targetId(normalizedDay);
+
+    final dayWorkouts = workouts.where((workout) {
+      return workout.date.year == normalizedDay.year &&
+          workout.date.month == normalizedDay.month &&
+          workout.date.day == normalizedDay.day;
+    }).toList();
+
+    if (dayWorkouts.isEmpty) {
+      await Boxes.targets.delete(targetId);
+      return;
+    }
+
+    int totalReps = 0;
+
+    for (final workout in dayWorkouts) {
+      for (final exerciseSet in workout.exercisesSet) {
+        for (final set in exerciseSet.sets) {
+          totalReps += set.reps;
+        }
+      }
+    }
+
+    await Boxes.targets.put(
+      targetId,
+      Target.withId(
+        id: targetId,
+        date: normalizedDay,
+        value: totalReps,
+        target: Preferences.respForDay,
+      ),
+    );
   }
 }

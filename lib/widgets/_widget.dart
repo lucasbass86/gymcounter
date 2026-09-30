@@ -1,3 +1,4 @@
+export 'package:gymcounter/widgets/targets/target_widget.dart';
 export 'package:gymcounter/widgets/recent_exercises/recent_exercise_grouped_widget.dart';
 export 'package:gymcounter/widgets/musculargroup/musculargroup_widget.dart';
 export 'package:gymcounter/widgets/common/bounceable_widget.dart';

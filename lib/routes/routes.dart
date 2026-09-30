@@ -20,4 +20,5 @@ Map<String, Widget Function(BuildContext)> routes = <String, WidgetBuilder>{
   RutineDetailPage.routeName: (_) => RutineDetailPage(),
   ListPage.routeName: (_) => ListPage(),
   UpdatePage.routeName: (_) => const UpdatePage(),
+  ListTargetsPage.routeName: (_) => const ListTargetsPage(),
 };

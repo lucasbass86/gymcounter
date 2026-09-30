@@ -1,3 +1,4 @@
+export 'package:gymcounter/models/target_model.dart';
 export 'package:gymcounter/models/rutine_model.dart';
 export 'package:gymcounter/models/measurement_model.dart';
 export 'package:gymcounter/models/exercises_examples_model.dart';

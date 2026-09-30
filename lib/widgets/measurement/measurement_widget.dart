@@ -80,6 +80,7 @@ class MeasurementWidget extends StatelessWidget {
                 );
                 if (resp && context.mounted) {
                   weightProvider.removeWeight(measurement);
+                  Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(Utils.snackBar('Registro borrado'));
                 }
               },

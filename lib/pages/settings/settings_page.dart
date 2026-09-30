@@ -22,7 +22,6 @@ class SettingsPage extends StatefulWidget {
 class _StatiHistorytate extends State<SettingsPage> {
   late GymProvider gymProvider;
   late WeightProvider weightProvider;
-  TimeOfDay goalTime = TimeOfDay(hour: Preferences.hoursForDay, minute: Preferences.minutesForDay);
   Duration restBetweenReps = Duration(
     minutes: Preferences.restMinutes,
     seconds: Preferences.restSeconds,
@@ -37,6 +36,7 @@ class _StatiHistorytate extends State<SettingsPage> {
   bool activeScreen = Preferences.activeScreen;
   late TextEditingController emailController;
   int backupDays = Preferences.backupDays;
+  int recordsForGraphics = Preferences.recordsForGraphics;
 
   @override
   Widget build(BuildContext context) {
@@ -77,6 +77,8 @@ class _StatiHistorytate extends State<SettingsPage> {
               _homeScreen(),
               20.h,
               _playRutine(),
+              20.h,
+              _recordsInGraphs(),
               20.h,
               FutureBuilder(
                 future: Utils.checkConnection(),
@@ -209,7 +211,11 @@ class _StatiHistorytate extends State<SettingsPage> {
                             cancel: true,
                           );
                           if (resp && context.mounted) {
-                            final confirm = await showSlideToUnlock(context);
+                            final confirm = await showSlideToUnlock(
+                              context,
+                              backColor: AppColors.primary,
+                              slideColor: AppColors.card,
+                            );
                             if (confirm) {
                               Preferences.email = '';
                               Preferences.backUp = '';
@@ -239,7 +245,11 @@ class _StatiHistorytate extends State<SettingsPage> {
                                 cancel: true,
                               ).then((value) {
                                 if (value && context.mounted) {
-                                  showSlideToUnlock(context).then((unlock) {
+                                  showSlideToUnlock(
+                                    context,
+                                    backColor: AppColors.primary,
+                                    slideColor: AppColors.card,
+                                  ).then((unlock) {
                                     if (unlock) {
                                       BackupService.deleteBackUp(emailController.text).then((_) {
                                         Preferences.email = '';
@@ -324,7 +334,11 @@ class _StatiHistorytate extends State<SettingsPage> {
   Widget _uploadDataToInternet(BuildContext context) {
     return GestureDetector(
       onTap: () async {
-        final res = await showSlideToUnlock(context);
+        final res = await showSlideToUnlock(
+          context,
+          backColor: AppColors.primary,
+          slideColor: AppColors.card,
+        );
         if (res) {
           User user = User(
             email: emailController.text,
@@ -333,6 +347,7 @@ class _StatiHistorytate extends State<SettingsPage> {
             measurements: weightProvider.weights,
             rutines: gymProvider.rutines,
             workouts: gymProvider.workouts,
+            targets: gymProvider.targets,
           );
           await BackupService.addBackUp(user);
           _showSnackBar('Copia subida', isGood: true);
@@ -373,7 +388,11 @@ class _StatiHistorytate extends State<SettingsPage> {
               cancel: true,
             );
             if (confirmed && context.mounted) {
-              final unlock = await showSlideToUnlock(context);
+              final unlock = await showSlideToUnlock(
+                context,
+                backColor: AppColors.primary,
+                slideColor: AppColors.card,
+              );
               if (unlock && context.mounted) {
                 _setData(context, user!);
               }
@@ -405,11 +424,13 @@ class _StatiHistorytate extends State<SettingsPage> {
     gymProvider.exercises = user.exercises;
     gymProvider.rutines = user.rutines;
     gymProvider.workouts = user.workouts;
+    gymProvider.targets = user.targets;
     weightProvider.weights = user.measurements;
 
     await Boxes.exercises.deleteAll(Boxes.exercises.keys);
     await Boxes.rutines.deleteAll(Boxes.rutines.keys);
     await Boxes.workouts.deleteAll(Boxes.workouts.keys);
+    await Boxes.targets.deleteAll(Boxes.targets.keys);
     await Boxes.weights.deleteAll(Boxes.weights.keys);
 
     for (Exercise t in user.exercises) {
@@ -421,12 +442,49 @@ class _StatiHistorytate extends State<SettingsPage> {
     for (Workout p in user.workouts) {
       await Boxes.workouts.put(p.id, p.toJson());
     }
+    for (Target t in user.targets) {
+      await Boxes.targets.put(t.id, t.toJson());
+    }
     for (Measurement pm in user.measurements) {
       await Boxes.weights.put(pm.id, pm.toJson());
     }
 
     _showSnackBar('Datos cargados', isGood: true);
     gymProvider.notify();
+  }
+
+  Widget _recordsInGraphs() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Registros en graficos', style: TextStyle(fontSize: 20, color: AppColors.primary)),
+        10.h,
+        Card(
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Últimos', style: TextStyle(color: Colors.white, fontSize: 17)),
+                BasicContainerWidget(
+                  width: 120,
+                  child: DropdownButton(
+                    value: recordsForGraphics,
+                    underline: Container(),
+                    borderRadius: BorderRadius.circular(20),
+                    items: Utils.recordsForGraphics
+                        .map((d) => DropdownMenuItem(value: d, child: Text(d.toString())))
+                        .toList(),
+                    onChanged: (value) => setState(() => recordsForGraphics = value!),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _playRutine() {
@@ -521,6 +579,7 @@ class _StatiHistorytate extends State<SettingsPage> {
                   child: DropdownButton(
                     value: daysOfRecentExercises,
                     underline: Container(),
+                    borderRadius: BorderRadius.circular(20),
                     items: Utils.daysForRecentExercises
                         .map((d) => DropdownMenuItem(value: d, child: Text(d.toString())))
                         .toList(),
@@ -556,6 +615,7 @@ class _StatiHistorytate extends State<SettingsPage> {
                   child: DropdownButton(
                     value: weightControl,
                     underline: Container(),
+                    borderRadius: BorderRadius.circular(20),
                     items: Utils.weightDays
                         .map((d) => DropdownMenuItem(value: d, child: Text(d.toString())))
                         .toList(),
@@ -640,39 +700,6 @@ class _StatiHistorytate extends State<SettingsPage> {
                     ),
                   ],
                 ),
-                Divider(color: AppColors.divider),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('Tiempo', style: TextStyle(color: Colors.white, fontSize: 17)),
-                    GestureDetector(
-                      behavior: HitTestBehavior.translucent,
-                      onTap: () async {
-                        final resp = await showTimePicker(
-                          context: context,
-                          cancelText: 'Cancelar',
-                          confirmText: 'Aceptar',
-                          switchToInputEntryModeIcon: null,
-                          switchToTimerEntryModeIcon: null,
-                          hourLabelText: 'Hora',
-                          minuteLabelText: 'Minuto',
-                          helpText: 'Tiempo objetivo',
-                          initialEntryMode: TimePickerEntryMode.dialOnly,
-                          initialTime: goalTime,
-                        );
-                        if (resp != null) {
-                          setState(() => goalTime = resp);
-                        }
-                      },
-                      child: BasicContainerWidget(
-                        child: Text(
-                          Utils.timeOfDayToString(goalTime),
-                          style: TextStyle(fontSize: 17, color: Colors.white),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
               ],
             ),
           ),
@@ -684,8 +711,6 @@ class _StatiHistorytate extends State<SettingsPage> {
   void _savePreferences() {
     //OBJETIVOS DIARIOS
     Preferences.respForDay = int.parse(controllerReps.text);
-    Preferences.hoursForDay = goalTime.hour;
-    Preferences.minutesForDay = goalTime.minute;
     //VALORES PREDETERMINADOS
     Preferences.restMinutes = restBetweenReps.inMinutes;
     Preferences.restSeconds = Utils.secondsDuration(restBetweenReps);
@@ -698,6 +723,8 @@ class _StatiHistorytate extends State<SettingsPage> {
     Preferences.groupRecentExercises = groupRecentExercises;
     //PANTALLA RUTINA
     Preferences.activeScreen = activeScreen;
+    //REGISTROS POR GRAFICOS:
+    Preferences.recordsForGraphics = recordsForGraphics;
     //COPIAS DE SEGURIDAD
     Preferences.backupDays = backupDays;
     //CERRAR

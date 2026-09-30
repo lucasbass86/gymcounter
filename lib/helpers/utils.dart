@@ -10,6 +10,7 @@ class Utils {
   //
   static const List<int> weightDays = [1, 2, 3, 4, 5, 6, 7, 10, 15, 20, 30];
   static const List<int> daysForRecentExercises = [3, 5, 7, 10];
+  static const List<int> recordsForGraphics = [10, 20, 30, 40, 50, 100];
   //
   // COLORS
   //
@@ -75,6 +76,7 @@ class Utils {
   static const IconData iconList = Icons.list_rounded;
   static const IconData iconGrouped = Icons.account_tree_rounded;
   static const IconData iconRestart = Icons.restart_alt_rounded;
+  static const IconData iconTarget = Icons.location_searching_rounded;
 
   static Color progressColor(int reps, int total) {
     if (total == 0) return AppColors.error;
@@ -462,10 +464,15 @@ class Utils {
   ///
   ///PORCENTAJES
   ///
-  static double getPercent(int previous, int now) {
+  static double getPercentComparer(int previous, int now) {
     if (previous == 0) {
       return now == 0 ? 0 : 100;
     }
     return ((now - previous) / previous) * 100;
+  }
+
+  static int getPercent(int current, int total) {
+    if (total == 0) return 0;
+    return (current / total * 100).round();
   }
 }

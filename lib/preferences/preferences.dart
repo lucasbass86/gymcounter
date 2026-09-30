@@ -20,20 +20,6 @@ class Preferences {
     _prefs.setInt('respForDay', value);
   }
 
-  static int _hoursForDay = 0;
-  static int get hoursForDay => _prefs.getInt('hoursForDay') ?? _hoursForDay;
-  static set hoursForDay(int value) {
-    _hoursForDay = value;
-    _prefs.setInt('hoursForDay', value);
-  }
-
-  static int _minutesForDay = 30;
-  static int get minutesForDay => _prefs.getInt('minutesForDay') ?? _minutesForDay;
-  static set minutesForDay(int value) {
-    _minutesForDay = value;
-    _prefs.setInt('minutesForDay', value);
-  }
-
   static int _restMinutes = 0;
   static int get restMinutes => _prefs.getInt('restMinutes') ?? _restMinutes;
   static set restMinutes(int value) {
@@ -90,6 +76,13 @@ class Preferences {
   static set daysOfRecentExercises(int value) {
     _daysOfRecentExercises = value;
     _prefs.setInt('daysOfRecentExercises', value);
+  }
+
+  static int _recordsForGraphics = 10;
+  static int get recordsForGraphics => _prefs.getInt('recordsForGraphics') ?? _recordsForGraphics;
+  static set recordsForGraphics(int value) {
+    _recordsForGraphics = value;
+    _prefs.setInt('recordsForGraphics', value);
   }
 
   static int _indexHome = 0;

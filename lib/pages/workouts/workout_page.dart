@@ -562,8 +562,8 @@ class _WorkoutPageState extends State<WorkoutPage> {
     }
     workout!.finished = true;
     workout!.time = time;
-    gymProvider.currentWorkout = workout;
-    final ok = gymProvider.addWorkout(gymProvider.currentWorkout!);
+    final ok = gymProvider.addWorkout(workout!);
+    gymProvider.currentWorkout = null;
     if (ok) {
       ScaffoldMessenger.of(context).showSnackBar(Utils.snackBar('Workout finalizado'));
     } else {

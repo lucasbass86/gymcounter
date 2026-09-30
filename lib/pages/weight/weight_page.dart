@@ -28,7 +28,9 @@ class _WeightPageState extends State<WeightPage> {
     weightProvider = Provider.of<WeightProvider>(context);
     weights = weightProvider.weights;
     weights.sort((a, b) => b.date.compareTo(a.date));
-    weights = weights.length >= 10 ? weights.getRange(0, 10).toList() : weights;
+    weights = weights.length > Preferences.recordsForGraphics
+        ? weights.getRange(0, Preferences.recordsForGraphics).toList()
+        : weights;
     return Scaffold(
       appBar: _appBar(context),
       floatingActionButton: _fab(context),
@@ -39,25 +41,26 @@ class _WeightPageState extends State<WeightPage> {
           children: [
             _graphic(),
             20.h,
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('Mediciones', style: TextStyle(fontSize: 17, color: Colors.white)),
-                GestureDetector(
-                  onTap: () => Navigator.pushNamed(
-                    context,
-                    ListPage.routeName,
-                    arguments: weightProvider.weights,
-                  ),
-                  child: Text('Ver todo', style: TextStyle(color: AppColors.success)),
-                ),
-              ],
-            ),
+            _headerWeight(context),
             10.h,
             Expanded(child: _measurements()),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _headerWeight(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text('Mediciones', style: TextStyle(fontSize: 17, color: Colors.white)),
+        GestureDetector(
+          onTap: () =>
+              Navigator.pushNamed(context, ListPage.routeName, arguments: weightProvider.weights),
+          child: Text('Ver todo', style: TextStyle(color: AppColors.success)),
+        ),
+      ],
     );
   }
 
@@ -100,7 +103,10 @@ class _WeightPageState extends State<WeightPage> {
   }
 
   Widget _graphic() {
-    List<Measurement> values = weightProvider.weights;
+    //CARGAR UN MAXIMO DE 50.
+    List<Measurement> values = weightProvider.weights.length > Preferences.recordsForGraphics
+        ? weightProvider.weights.getRange(0, Preferences.recordsForGraphics).toList()
+        : weightProvider.weights;
     List<CartesianSeries<Measurement, dynamic>> series = [
       AreaSeries(
         dataSource: values,
@@ -129,7 +135,16 @@ class _WeightPageState extends State<WeightPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Evolución', style: TextStyle(fontSize: 17, color: Colors.white)),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('Evolución', style: TextStyle(fontSize: 17, color: Colors.white)),
+            Text(
+              'Últimos ${values.length > Preferences.recordsForGraphics ? Preferences.recordsForGraphics : values.length}',
+              style: TextStyle(color: AppColors.success),
+            ),
+          ],
+        ),
         10.h,
         SizedBox(
           height: 200,

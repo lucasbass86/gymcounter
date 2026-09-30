@@ -28,6 +28,7 @@ void main() async {
   await Hive.openBox(Boxes.boxNameWorkouts);
   await Hive.openBox(Boxes.boxNameCurrentWorkout);
   await Hive.openBox(Boxes.boxNameRutines);
+  await Hive.openBox(Boxes.boxNameTargets);
 
   runApp(
     MultiProvider(

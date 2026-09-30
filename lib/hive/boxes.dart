@@ -20,4 +20,8 @@ class Boxes {
   //RUTINAS
   static final String boxNameRutines = 'GymCounterRutines';
   static final Box rutines = Hive.box(boxNameRutines);
+
+  //TARGETS
+  static final String boxNameTargets = 'GymCounterTargets';
+  static final Box targets = Hive.box(boxNameTargets);
 }

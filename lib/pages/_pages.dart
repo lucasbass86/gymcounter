@@ -1,3 +1,4 @@
+export 'package:gymcounter/pages/targets/list_targets_page.dart';
 export 'package:gymcounter/pages/list/list_page.dart';
 export 'package:gymcounter/pages/rutines/rutine_detail_page.dart';
 export 'package:gymcounter/pages/statistics/statistics_list_page.dart';

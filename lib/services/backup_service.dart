@@ -18,6 +18,7 @@ class User {
   List<Measurement> measurements;
   List<Rutine> rutines;
   List<Workout> workouts;
+  List<Target> targets;
 
   @override
   String toString() => email;
@@ -29,6 +30,7 @@ class User {
     required this.measurements,
     required this.rutines,
     required this.workouts,
+    required this.targets,
   });
 
   factory User.fromJson(Map<String, dynamic> json) => User(
@@ -39,6 +41,7 @@ class User {
         (json['measurements'] as List?)?.map((e) => Measurement.fromJson(e)).toList() ?? [],
     rutines: (json['rutines'] as List?)?.map((e) => Rutine.fromJson(e)).toList() ?? [],
     workouts: (json['workouts'] as List?)?.map((e) => Workout.fromJson(e)).toList() ?? [],
+    targets: (json['targets'] as List?)?.map((e) => Target.fromJson(e)).toList() ?? [],
   );
 
   Map<String, dynamic> toJson() => {
@@ -48,6 +51,7 @@ class User {
     'measurements': (measurements).map((e) => e.toJson()).toList(),
     'rutines': (rutines).map((e) => e.toJson()).toList(),
     'workouts': (workouts).map((e) => e.toJson()).toList(),
+    'targets': (targets).map((e) => e.toJson()).toList(),
   };
 }
 

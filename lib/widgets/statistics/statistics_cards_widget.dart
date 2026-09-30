@@ -56,7 +56,10 @@ class StatisticsCardsWidget extends StatelessWidget {
         previousTitle = (date.year - 1).toString();
         break;
     }
-    final int percentWorkouts = Utils.getPercent(prevsWorkouts.length, workouts.length).toInt();
+    final int percentWorkouts = Utils.getPercentComparer(
+      prevsWorkouts.length,
+      workouts.length,
+    ).toInt();
     final Duration prevDuration = prevsWorkouts.fold(
       Duration.zero,
       (p1, e1) =>
@@ -71,9 +74,12 @@ class StatisticsCardsWidget extends StatelessWidget {
                 ),
           ),
     );
-    final int percentTime = Utils.getPercent(prevDuration.inMinutes, duration.inMinutes).toInt();
+    final int percentTime = Utils.getPercentComparer(
+      prevDuration.inMinutes,
+      duration.inMinutes,
+    ).toInt();
     final int prevTotalReps = prevsWorkouts.fold(0, (p1, e1) => p1 + e1.totalReps);
-    final int percentReps = Utils.getPercent(prevTotalReps, totalReps).toInt();
+    final int percentReps = Utils.getPercentComparer(prevTotalReps, totalReps).toInt();
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
